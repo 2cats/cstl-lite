@@ -1,27 +1,31 @@
 #ifndef _MCLIB_VECTOR_H
 #define _MCLIB_VECTOR_H
-#include <stdarg.h>
+
 #include <common.h>
-#define VECTOR_REGISTER_AT_GLOBAL(type) void type##_setter(void* dest,va_list item){*(type*)(dest)=va_arg(item,type);}
-typedef void (*type_setter_t)(void* dest,va_list item);
+
 typedef struct{
-    usize_t typeSize;
-    type_setter_t setter;
-    char* data;
-    usize_t rawSize;
-    usize_t rawCap;
+    CommonPrivateType   common;
+    byte_ptr_t          data;
+    usize_t             rawSize;
+    usize_t             rawCap;
 }VectorPrivateType;
+
 typedef struct{
     VectorPrivateType $;
 }VectorType;
 #define VectorNew(type) _VectorNew(sizeof(type),type##_setter)
-#define VectorGet(type,vector,index) (*((type*)_VectorGet(vector,index)))
+#define VectorAt(type,vector,index) (*((type*)_VectorAt(vector,index)))
+#define VectorPushback(vector,data) VectorInsert(vector,VectorSize(vector),data)
+
 VectorType* _VectorNew(usize_t t_size,type_setter_t setter);
-void VectorDelete(VectorType* vector);
-void VectorPushback(VectorType* vector,...);
-void* _VectorGet(VectorType* vector ,usize_t index);
+void VectorDestroy(VectorType* vector);
+void VectorInsert(VectorType* vector,usize_t pos, ...);
+byte_ptr_t _VectorAt(VectorType* vector ,usize_t index);
 void VectorErase(VectorType* vector,usize_t index);
 void VectorPopback(VectorType* vector);
 usize_t VectorSize(VectorType* vector);
 usize_t VectorCapacity(VectorType* vector);
+
+void _VectorSet(int index,va_list val,...);
+void* _VectorGet(int index,...);
 #endif
