@@ -1,4 +1,4 @@
-TARGET:=vector_test
+TARGET:=array_test
 run:${TARGET}
 	
 ${TARGET}:test/src/${TARGET}.c src/*.c
